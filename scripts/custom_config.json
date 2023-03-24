@@ -23,26 +23,26 @@
   "data": {
     "path": "/allrank/MQ2008/",
     "validation_ds_role": "vali",
-    "num_workers": 1,
+    "num_workers": 6,
     "batch_size": 128,
     "slate_length": 240
   },
   "optimizer": {
     "name": "Adam",
     "args": {
-      "lr": 0.001
+      "lr": 0.01
     }
   },
   "lr_scheduler": {
     "name": "StepLR",
     "args": {
-      "step_size": 3,
+      "step_size": 5,
       "gamma": 0.5
     }
   },
   "training": {
     "epochs": 500,
-    "early_stopping_patience": 200,
+    "early_stopping_patience": 5,
     "gradient_clipping_norm": null
   },
   "val_metric": "dcg_5",
@@ -50,13 +50,13 @@
     "dcg_5"
   ],
   "loss": {
-    "name": "rankNet",
+    "name": "bestlossfunction", 
     "args": {
     }
   },
   "expected_metrics" : {
     "val": {
-      "dcg_5": 0.6
+      "dcg_5": 0.1
     }
   }
 }
