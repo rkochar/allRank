@@ -45,9 +45,9 @@
     "early_stopping_patience": 5,
     "gradient_clipping_norm": null
   },
-  "val_metric": "dcg_5",
+  "val_metric": "ndcg_5",
   "metrics": [
-    "dcg_5"
+    "ndcg_5"
   ],
   "loss": {
     "name": "bestlossfunction", 
@@ -56,7 +56,7 @@
   },
   "expected_metrics" : {
     "val": {
-      "dcg_5": 0.1
+      "ndcg_5": 0.1
     }
   }
 }

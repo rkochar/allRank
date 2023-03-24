@@ -3,6 +3,7 @@ import torch
 from allrank.data.dataset_loading import PADDED_Y_VALUE
 from torch.nn import KLDivLoss, HingeEmbeddingLoss, CrossEntropyLoss, BCEWithLogitsLoss, MarginRankingLoss
 from torch import rand
+from rankNet import rankNet
 
 def bestlossfunction(y_pred, y_true, padded_value_indicator=PADDED_Y_VALUE):
     """
@@ -23,16 +24,18 @@ def bestlossfunction(y_pred, y_true, padded_value_indicator=PADDED_Y_VALUE):
 
     crossloss = CrossEntropyLoss()
     cl = crossloss(y_true, y_pred)
-    print("cl: " + str(cl))
 
     leiblerloss = KLDivLoss()
     ll = leiblerloss(y_true, y_pred)
-    print(type(ll))
-    print("ll: " + str(ll))
-    print("lltest: " + str(ll[1]))
+
+    rn = rankNet(y_pred, y_true)
 
     # marginrankingloss = MarginRankingLoss()
     # mrl = marginrankingloss(y_true, y_pred)
     # print(mrl)
 
-    return ll
+    return (ll + cl + rn) / 3
+
+
+def get_tensor_value(t):
+    return float(t[t.find("(")+1 : t.find(",")])
