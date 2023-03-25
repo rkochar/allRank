@@ -47,7 +47,7 @@
   },
   "val_metric": "ndcg_5",
   "metrics": [
-    "ndcg_5"
+    "ndcg_5", "ndcg_10", "ndcg_15"
   ],
   "loss": {
     "name": "bestlossfunction", 
