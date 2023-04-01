@@ -101,7 +101,7 @@ def fit(epochs, model, loss_func, second_loss_func, optimizer, scheduler, train_
         logger.info("Current learning rate: {}".format(get_current_lr(optimizer)))
 
         # TODO: put condition
-        if epoch is not None:
+        if epoch % 2 == 0:
             use_loss_func = loss_func
         else:
             use_loss_func = second_loss_func
