@@ -54,6 +54,11 @@
     "args": {
     }
   },
+  "second_loss": {
+    "name": "secondlossfunction",
+    "args": {
+    }
+  },
   "expected_metrics" : {
     "val": {
       "ndcg_5": 0.1

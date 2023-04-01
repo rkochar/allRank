@@ -29,13 +29,13 @@ def bestlossfunction(y_pred, y_true, padded_value_indicator=PADDED_Y_VALUE):
     # cl = crossloss(y_true, y_pred)
     # print("cl: " + str(cl))
 
-    leiblerloss = KLDivLoss()
-    ll = leiblerloss(y_true, y_pred)
+    #leiblerloss = KLDivLoss()
+    #ll = leiblerloss(y_true, y_pred)
     # print("ll: " + str(ll))
 
     # rn = rankNet(y_pred, y_true)
-    nndcg = neuralNDCG(y_pred, y_true)
-    # andcg = approxNDCGLoss(y_pred, y_true)
+    # nndcg = neuralNDCG(y_pred, y_true)
+    #andcg = approxNDCGLoss(y_pred, y_true)
 
     # mle = listMLE(y_true, y_pred)
 
@@ -57,4 +57,4 @@ def bestlossfunction(y_pred, y_true, padded_value_indicator=PADDED_Y_VALUE):
     L1loss = L1Loss()
     l1 = L1loss(y_true, y_pred)
 
-    return ll + 3 * l1 + nndcg
+    return  l1
