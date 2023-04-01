@@ -21,7 +21,7 @@
     }
   },
   "data": {
-    "path": "/allrank/MQ2008/",
+    "path": "/mnt/c/Users/deepa/PycharmProjects/informationRet/allrank/Fold1",
     "validation_ds_role": "vali",
     "num_workers": 6,
     "batch_size": 128,
@@ -42,7 +42,7 @@
   },
   "training": {
     "epochs": 500,
-    "early_stopping_patience": 5,
+    "early_stopping_patience": 40,
     "gradient_clipping_norm": null
   },
   "val_metric": "ndcg_5",

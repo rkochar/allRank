@@ -40,18 +40,18 @@ def run():
     args = parse_args()
 
     paths = PathsContainer.from_args(args.job_dir, args.run_id, args.config_file_name)
-
-    create_output_dirs(paths.output_dir)
-
-    logger = init_logger(paths.output_dir)
-    logger.info(f"created paths container {paths}")
+    #
+    # create_output_dirs(paths.output_dir)
+    #
+    # logger = init_logger(paths.output_dir)
+    # logger.info(f"created paths container {paths}")
 
     # read config
     config = Config.from_json(paths.config_path)
-    logger.info("Config:\n {}".format(pformat(vars(config), width=1)))
+    print("Config:\n {}".format(pformat(vars(config), width=1)))
 
-    output_config_path = os.path.join(paths.output_dir, "used_config.json")
-    execute_command("cp {} {}".format(paths.config_path, output_config_path))
+    # output_config_path = os.path.join(paths.output_dir, "used_config.json")
+    # execute_command("cp {} {}".format(paths.config_path, output_config_path))
 
     # train_ds, val_ds
     train_ds, val_ds = load_libsvm_dataset(
@@ -69,13 +69,13 @@ def run():
 
     # gpu support
     dev = get_torch_device()
-    logger.info("Model training will execute on {}".format(dev.type))
+    print("Model training will execute on {}".format(dev.type))
 
     # instantiate model
     model = make_model(n_features=n_features, **asdict(config.model, recurse=False))
     if torch.cuda.device_count() > 1:
         model = CustomDataParallel(model)
-        logger.info("Model training will be distributed to {} GPUs.".format(torch.cuda.device_count()))
+        print("Model training will be distributed to {} GPUs.".format(torch.cuda.device_count()))
     model.to(dev)
 
     # load optimizer, loss and LR scheduler
@@ -106,10 +106,10 @@ def run():
             **asdict(config.training)
         )
 
-    dump_experiment_result(args, config, paths.output_dir, result)
-
-    if urlparse(args.job_dir).scheme == "gs":
-        copy_local_to_gs(paths.local_base_output_path, args.job_dir)
+    # dump_experiment_result(args, config, paths.output_dir, result)
+    #
+    # if urlparse(args.job_dir).scheme == "gs":
+    #     copy_local_to_gs(paths.local_base_output_path, args.job_dir)
 
     assert_expected_metrics(result, config.expected_metrics)
 

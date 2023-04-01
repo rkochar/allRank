@@ -8,7 +8,7 @@ from allrank.models.losses.neuralNDCG import neuralNDCG
 from allrank.models.losses.listMLE import listMLE
 from allrank.models.losses.approxNDCG import approxNDCGLoss
 
-def bestlossfunction(y_pred, y_true, padded_value_indicator=PADDED_Y_VALUE):
+def bestlossfunction(y_pred, y_true,epoch, padded_value_indicator=PADDED_Y_VALUE):
     """
     Pointwise RMSE loss.
     :param y_pred: predictions from the model, shape [batch_size, slate_length]
@@ -16,6 +16,8 @@ def bestlossfunction(y_pred, y_true, padded_value_indicator=PADDED_Y_VALUE):
     :param padded_value_indicator: an indicator of the y_true index containing a padded item, e.g. -1
     :return: loss value, a torch.Tensor
     """
+
+    #print('epoch running',epoch)
     y_pred = y_pred.clone()
     y_true = y_true.clone()
 
@@ -51,10 +53,10 @@ def bestlossfunction(y_pred, y_true, padded_value_indicator=PADDED_Y_VALUE):
     # nl = nll(y_true, y_pred)
     # dim
 
-    #mseloss = MSELoss()
-    #mse = mseloss(y_true, y_pred)
+    mseloss = MSELoss()
+    mse = mseloss(y_true, y_pred)
 
-    L1loss = L1Loss()
-    l1 = L1loss(y_true, y_pred)
+    # L1loss = L1Loss()
+    # l1 = L1loss(y_true, y_pred)
 
-    return  l1
+    return  mse
