@@ -71,6 +71,7 @@ class Config:
     training = attrib(type=TrainingConfig)
     loss = attrib(type=NameArgsConfig)
     second_loss = attrib(type=NameArgsConfig)
+    third_loss = attrib(type=NameArgsConfig)
     metrics = attrib(type=Dict[str, List[int]])
     lr_scheduler = attrib(type=NameArgsConfig)
     val_metric = attrib(type=str, default=None)
@@ -99,6 +100,7 @@ class Config:
         config["lr_scheduler"] = NameArgsConfig(**config["lr_scheduler"])
         config["loss"] = NameArgsConfig(**config["loss"])
         config["second_loss"] = NameArgsConfig(**config["second_loss"])
+        config["third_loss"] = NameArgsConfig(**config["third_loss"])
         if "click_model" in config.keys():
             config["click_model"] = NameArgsConfig(**config["click_model"])
         return cls(**config)

@@ -86,7 +86,7 @@ def get_current_lr(optimizer):
         return param_group["lr"]
 
 
-def fit(epochs, model, loss_func, second_loss_func, optimizer, scheduler, train_dl, valid_dl, config,
+def fit(epochs, model, loss_func, second_loss_func, third_loss_func, optimizer, scheduler, train_dl, valid_dl, config,
         gradient_clipping_norm, early_stopping_patience, device, output_dir, tensorboard_output_path):
     tensorboard_summary_writer = TensorboardSummaryWriter(tensorboard_output_path)
 
@@ -95,16 +95,17 @@ def fit(epochs, model, loss_func, second_loss_func, optimizer, scheduler, train_
 
     early_stop = EarlyStop(early_stopping_patience)
 
-    # use_loss_func = loss_func
-
     for epoch in range(epochs):
         logger.info("Current learning rate: {}".format(get_current_lr(optimizer)))
 
         # TODO: put condition
-        if epoch % 2 == 0:
+        if epoch % 3 == 0:
             use_loss_func = loss_func
-        else:
+        elif epoch % 3 == 1:
             use_loss_func = second_loss_func
+        else:
+            use_loss_func = third_loss_func
+            
         logger.info("Using loss function: {}".format(use_loss_func))
 
         model.train()

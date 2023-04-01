@@ -82,6 +82,7 @@ def run():
     optimizer = getattr(optim, config.optimizer.name)(params=model.parameters(), **config.optimizer.args)
     loss_func = partial(getattr(losses, config.loss.name), **config.loss.args)
     second_loss_func = partial(getattr(losses, config.second_loss.name), **config.loss.args)
+    third_loss_func = partial(getattr(losses, config.third_loss.name), **config.loss.args)
     if config.lr_scheduler.name:
         scheduler = getattr(optim.lr_scheduler, config.lr_scheduler.name)(optimizer, **config.lr_scheduler.args)
     else:
@@ -93,6 +94,7 @@ def run():
             model=model,
             loss_func=loss_func,
             second_loss_func=second_loss_func,
+            third_loss_func=third_loss_func,
             optimizer=optimizer,
             scheduler=scheduler,
             train_dl=train_dl,

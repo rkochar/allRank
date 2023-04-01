@@ -8,7 +8,7 @@ from allrank.models.losses.neuralNDCG import neuralNDCG
 from allrank.models.losses.listMLE import listMLE
 from allrank.models.losses.approxNDCG import approxNDCGLoss
 
-def secondlossfunction(y_pred, y_true, padded_value_indicator=PADDED_Y_VALUE):
+def thirdlossfunction(y_pred, y_true, padded_value_indicator=PADDED_Y_VALUE):
     """
     Pointwise RMSE loss.
     :param y_pred: predictions from the model, shape [batch_size, slate_length]

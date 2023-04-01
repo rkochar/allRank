@@ -59,6 +59,11 @@
     "args": {
     }
   },
+  "third_loss": {
+    "name": "thirdlossfunction",
+    "args": {
+    }
+  },
   "expected_metrics" : {
     "val": {
       "ndcg_5": 0.1
