@@ -74,8 +74,7 @@ def bestlossfunction(y_pred, y_true,epoch, padded_value_indicator=PADDED_Y_VALUE
 
     #print(weight)
     weight = math.exp(-epoch * 0.02)
-    loss = neuralNDCG(y_pred, y_true,epoch, padded_value_indicator=PADDED_Y_VALUE, temperature=1., powered_relevancies=True, k=None,
-               stochastic=False, n_samples=32, beta=0.1, log_scores=True)
+    loss = (weight*(leiblerloss(y_true, y_pred)) + (1-weight)*neuralNDCG(y_pred, y_true,padded_value_indicator=padded_value_indicator))
 
 
     return loss

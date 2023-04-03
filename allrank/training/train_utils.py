@@ -19,8 +19,7 @@ ndcg5, ndcg10, ndcg15 = [], [], []
 
 def loss_batch(model,epoch, loss_func, xb, yb, indices, gradient_clipping_norm, opt=None):
     mask = (yb == PADDED_Y_VALUE)
-    loss = loss_func(model(xb, mask, indices), yb)
-    print(loss)
+    loss = loss_func(model(xb, mask, indices), yb,epoch)
 
     if opt is not None:
         loss.backward()

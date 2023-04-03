@@ -41,13 +41,13 @@
     }
   },
   "training": {
-    "epochs": 100,
-    "early_stopping_patience": 100,
+    "epochs": 30,
+    "early_stopping_patience": 30,
     "gradient_clipping_norm": null
   },
   "val_metric": "ndcg_5",
   "metrics": [
-    "ndcg_5", "ndcg_10", "ndcg_15"
+    "ndcg_5", "ndcg_10", "ndcg_15","ndcg_1"
   ],
   "loss": {
     "name": "neuralNDCG",
