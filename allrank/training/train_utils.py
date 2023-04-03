@@ -19,7 +19,8 @@ ndcg5, ndcg10, ndcg15 = [], [], []
 
 def loss_batch(model,epoch, loss_func, xb, yb, indices, gradient_clipping_norm, opt=None):
     mask = (yb == PADDED_Y_VALUE)
-    loss = loss_func(model(xb, mask, indices), yb,epoch)
+    loss = loss_func(model(xb, mask, indices), yb)
+    print(loss)
 
     if opt is not None:
         loss.backward()
@@ -87,7 +88,7 @@ def get_current_lr(optimizer):
 
 
 def fit(epochs, model, loss_func, second_loss_func, third_loss_func, optimizer, scheduler, train_dl, valid_dl, config,
-        gradient_clipping_norm, early_stopping_patience, device, output_dir, tensorboard_output_path):
+        gradient_clipping_norm, early_stopping_patience,test_dl, device, output_dir, tensorboard_output_path):
     # tensorboard_summary_writer = TensorboardSummaryWriter(tensorboard_output_path)
 
     num_params = get_num_params(model)
@@ -98,24 +99,12 @@ def fit(epochs, model, loss_func, second_loss_func, third_loss_func, optimizer, 
     for epoch in range(epochs):
         logger.info("Current learning rate: {}".format(get_current_lr(optimizer)))
 
-        # # TODO: put condition
-        # if epoch % 3 == 0:
-        #     use_loss_func = loss_func
-        # elif epoch % 3 == 1:
-        #     use_loss_func = second_loss_func
-        # else:
-        #     use_loss_func = third_loss_func
-
-        use_loss_func = loss_func
-            
-        logger.info("Using loss function: {}".format(use_loss_func))
-
         model.train()
         # xb dim: [batch_size, slate_length, embedding_dim]
         # yb dim: [batch_size, slate_length]
 
         train_losses, train_nums = zip(
-            *[loss_batch(model,epoch, use_loss_func, xb.to(device=device), yb.to(device=device), indices.to(device=device),
+            *[loss_batch(model,epoch, loss_func, xb.to(device=device), yb.to(device=device), indices.to(device=device),
                          gradient_clipping_norm, optimizer) for
               xb, yb, indices in train_dl])
         train_loss = np.sum(np.multiply(train_losses, train_nums)) / np.sum(train_nums)
@@ -124,7 +113,7 @@ def fit(epochs, model, loss_func, second_loss_func, third_loss_func, optimizer, 
         model.eval()
         with torch.no_grad():
             val_losses, val_nums = zip(
-                *[loss_batch(model,epoch, use_loss_func, xb.to(device=device), yb.to(device=device), indices.to(device=device),
+                *[loss_batch(model,epoch, loss_func, xb.to(device=device), yb.to(device=device), indices.to(device=device),
                              gradient_clipping_norm) for
                   xb, yb, indices in valid_dl])
             val_metrics = compute_metrics(config.metrics, model, valid_dl, device)
@@ -165,6 +154,11 @@ def fit(epochs, model, loss_func, second_loss_func, third_loss_func, optimizer, 
             logger.info("Metric ndcg15")
             print(ndcg15)
             break
+
+
+    test_metrics = compute_metrics(config.metrics, model, test_dl, device)
+    print(test_metrics)
+
 
 
 

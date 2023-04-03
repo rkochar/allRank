@@ -10,7 +10,7 @@
     },
     "transformer": {
       "N": 1,
-      "d_ff": 64,
+      "d_ff": 256,
       "h": 1,
       "positional_encoding": null,
       "dropout": 0.0
@@ -21,16 +21,16 @@
     }
   },
   "data": {
-    "path": "/mnt/c/Users/deepa/PycharmProjects/informationRet/allrank/Fold1",
+    "path": "/mnt/c/Users/deepa/PycharmProjects/informationRet/allrank/data/Fold1",
     "validation_ds_role": "vali",
     "num_workers": 6,
-    "batch_size": 128,
-    "slate_length": 240
+    "batch_size": 64,
+    "slate_length": 120
   },
   "optimizer": {
     "name": "Adam",
     "args": {
-      "lr": 0.01
+      "lr": 0.02
     }
   },
   "lr_scheduler": {
@@ -41,8 +41,8 @@
     }
   },
   "training": {
-    "epochs": 500,
-    "early_stopping_patience": 40,
+    "epochs": 100,
+    "early_stopping_patience": 100,
     "gradient_clipping_norm": null
   },
   "val_metric": "ndcg_5",
@@ -50,7 +50,7 @@
     "ndcg_5", "ndcg_10", "ndcg_15"
   ],
   "loss": {
-    "name": "bestlossfunction", 
+    "name": "neuralNDCG",
     "args": {
     }
   },
