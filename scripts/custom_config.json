@@ -1,0 +1,62 @@
+{
+  "model": {
+    "fc_model": {
+      "sizes": [
+        64
+      ],
+      "input_norm": false,
+      "activation": null,
+      "dropout": 0.0
+    },
+    "transformer": {
+      "N": 1,
+      "d_ff": 64,
+      "h": 1,
+      "positional_encoding": null,
+      "dropout": 0.0
+    },
+    "post_model": {
+      "output_activation": "Sigmoid",
+      "d_output": 1
+    }
+  },
+  "data": {
+    "path": "/allrank/MQ2008/",
+    "validation_ds_role": "vali",
+    "num_workers": 6,
+    "batch_size": 128,
+    "slate_length": 240
+  },
+  "optimizer": {
+    "name": "Adam",
+    "args": {
+      "lr": 0.01
+    }
+  },
+  "lr_scheduler": {
+    "name": "StepLR",
+    "args": {
+      "step_size": 5,
+      "gamma": 0.5
+    }
+  },
+  "training": {
+    "epochs": 500,
+    "early_stopping_patience": 5,
+    "gradient_clipping_norm": null
+  },
+  "val_metric": "ndcg_5",
+  "metrics": [
+    "ndcg_5", "ndcg_10", "ndcg_15"
+  ],
+  "loss": {
+    "name": "bestlossfunction", 
+    "args": {
+    }
+  },
+  "expected_metrics" : {
+    "val": {
+      "ndcg_5": 0.1
+    }
+  }
+}
