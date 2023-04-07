@@ -1,14 +1,11 @@
 import torch
 
 from allrank.data.dataset_loading import PADDED_Y_VALUE
-from torch.nn import KLDivLoss, HingeEmbeddingLoss, CrossEntropyLoss, BCEWithLogitsLoss, MarginRankingLoss, HingeEmbeddingLoss, NLLLoss2d, MSELoss, L1Loss
+
+from torch.nn import L1Loss
 from torch import rand
 
-from allrank.models.losses import listNet
-from allrank.models.losses.rankNet import rankNet
 from allrank.models.losses.neuralNDCG import neuralNDCG
-from allrank.models.losses.listMLE import listMLE
-from allrank.models.losses.approxNDCG import approxNDCGLoss
 import math
 
 x = 30*11
@@ -24,7 +21,6 @@ def iterNN(y_pred, y_true, epoch, padded_value_indicator=PADDED_Y_VALUE, tempera
     :return: loss value, a torch.Tensor
     """
 
-    #print('epoch running',epoch)
     y_pred = y_pred.clone()
     y_true = y_true.clone()
 

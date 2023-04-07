@@ -26,6 +26,10 @@ We hope that allRank will facilitate both research in neural LTR and its industr
  7. ApproxNDCG
  8. RMSE
  9. NeuralNDCG (introduced in https://arxiv.org/pdf/2102.07831)
+ ```diff
+ + 10. IterNN <-- proposed by us
+ ```
+ 
 
 ### Getting started guide
 
