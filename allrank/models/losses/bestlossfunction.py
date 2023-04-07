@@ -37,7 +37,7 @@ def bestlossfunction(y_pred, y_true,epoch, padded_value_indicator=PADDED_Y_VALUE
     # cl = crossloss(y_true, y_pred)
     # print("cl: " + str(cl))
 
-    leiblerloss = KLDivLoss()
+    #leiblerloss = KLDivLoss()
     #ll = leiblerloss(y_true, y_pred)
     # print("ll: " + str(ll))
 
@@ -59,7 +59,7 @@ def bestlossfunction(y_pred, y_true,epoch, padded_value_indicator=PADDED_Y_VALUE
     # nl = nll(y_true, y_pred)
     # dim
 
-    mseloss = MSELoss()
+    #mseloss = MSELoss()
     #mse = mseloss(y_true, y_pred)
 
     L1loss = L1Loss()
@@ -74,7 +74,7 @@ def bestlossfunction(y_pred, y_true,epoch, padded_value_indicator=PADDED_Y_VALUE
 
     #print(weight)
     weight = math.exp(-epoch * 0.02)
-    loss = (weight*(leiblerloss(y_true, y_pred)) + (1-weight)*neuralNDCG(y_pred, y_true,padded_value_indicator=padded_value_indicator))
+    loss = (weight*(L1Loss(y_true, y_pred)) + (1-weight)*neuralNDCG(y_pred, y_true,padded_value_indicator=padded_value_indicator))
 
 
     return loss

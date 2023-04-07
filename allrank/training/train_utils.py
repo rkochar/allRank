@@ -86,7 +86,7 @@ def get_current_lr(optimizer):
         return param_group["lr"]
 
 
-def fit(epochs, model, loss_func, second_loss_func, third_loss_func, optimizer, scheduler, train_dl, valid_dl, config,
+def fit(epochs, model, loss_func, optimizer, scheduler, train_dl, valid_dl, config,
         gradient_clipping_norm, early_stopping_patience,test_dl, device, output_dir, tensorboard_output_path):
     # tensorboard_summary_writer = TensorboardSummaryWriter(tensorboard_output_path)
 
@@ -155,6 +155,7 @@ def fit(epochs, model, loss_func, second_loss_func, third_loss_func, optimizer, 
             break
 
 
+    #Provide test metrics for the fold of data
     test_metrics = compute_metrics(config.metrics, model, test_dl, device)
     print(test_metrics)
 
