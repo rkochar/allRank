@@ -19,6 +19,7 @@ from attr import asdict
 from functools import partial
 from pprint import pformat
 from torch import optim
+import time
 
 
 def parse_args() -> Namespace:
@@ -40,42 +41,43 @@ def run():
     args = parse_args()
 
     paths = PathsContainer.from_args(args.job_dir, args.run_id, args.config_file_name)
-
-    create_output_dirs(paths.output_dir)
-
-    logger = init_logger(paths.output_dir)
-    logger.info(f"created paths container {paths}")
+    #
+    # create_output_dirs(paths.output_dir)
+    #
+    # logger = init_logger(paths.output_dir)
+    # logger.info(f"created paths container {paths}")
 
     # read config
     config = Config.from_json(paths.config_path)
-    logger.info("Config:\n {}".format(pformat(vars(config), width=1)))
+    print("Config:\n {}".format(pformat(vars(config), width=1)))
 
-    output_config_path = os.path.join(paths.output_dir, "used_config.json")
-    execute_command("cp {} {}".format(paths.config_path, output_config_path))
+    # output_config_path = os.path.join(paths.output_dir, "used_config.json")
+    # execute_command("cp {} {}".format(paths.config_path, output_config_path))
 
     # train_ds, val_ds
-    train_ds, val_ds = load_libsvm_dataset(
+    train_ds, val_ds,test_ds = load_libsvm_dataset(
         input_path=config.data.path,
         slate_length=config.data.slate_length,
         validation_ds_role=config.data.validation_ds_role,
     )
 
+
     n_features = train_ds.shape[-1]
     assert n_features == val_ds.shape[-1], "Last dimensions of train_ds and val_ds do not match!"
 
     # train_dl, val_dl
-    train_dl, val_dl = create_data_loaders(
-        train_ds, val_ds, num_workers=config.data.num_workers, batch_size=config.data.batch_size)
+    train_dl, val_dl, test_dl = create_data_loaders(
+        train_ds, val_ds,test_ds, num_workers=config.data.num_workers, batch_size=config.data.batch_size)
 
     # gpu support
     dev = get_torch_device()
-    logger.info("Model training will execute on {}".format(dev.type))
+    print("Model training will execute on {}".format(dev.type))
 
     # instantiate model
     model = make_model(n_features=n_features, **asdict(config.model, recurse=False))
     if torch.cuda.device_count() > 1:
         model = CustomDataParallel(model)
-        logger.info("Model training will be distributed to {} GPUs.".format(torch.cuda.device_count()))
+        print("Model training will be distributed to {} GPUs.".format(torch.cuda.device_count()))
     model.to(dev)
 
     # load optimizer, loss and LR scheduler
@@ -88,6 +90,7 @@ def run():
 
     with torch.autograd.detect_anomaly() if config.detect_anomaly else dummy_context_mgr():  # type: ignore
         # run training
+        start = time.time()
         result = fit(
             model=model,
             loss_func=loss_func,
@@ -99,15 +102,19 @@ def run():
             device=dev,
             output_dir=paths.output_dir,
             tensorboard_output_path=paths.tensorboard_output_path,
+            test_dl = test_dl,
             **asdict(config.training)
         )
 
-    dump_experiment_result(args, config, paths.output_dir, result)
-
-    if urlparse(args.job_dir).scheme == "gs":
-        copy_local_to_gs(paths.local_base_output_path, args.job_dir)
+    # dump_experiment_result(args, config, paths.output_dir, result)
+    #
+    # if urlparse(args.job_dir).scheme == "gs":
+    #     copy_local_to_gs(paths.local_base_output_path, args.job_dir)
 
     assert_expected_metrics(result, config.expected_metrics)
+    end = time.time()
+
+    print('time taken',end-start)
 
 
 if __name__ == "__main__":

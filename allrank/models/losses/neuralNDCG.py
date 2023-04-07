@@ -7,7 +7,7 @@ from allrank.models.metrics import dcg
 from allrank.models.model_utils import get_torch_device
 
 
-def neuralNDCG(y_pred, y_true, padded_value_indicator=PADDED_Y_VALUE, temperature=1., powered_relevancies=True, k=None,
+def neuralNDCG(y_pred, y_true,padded_value_indicator=PADDED_Y_VALUE, temperature=1., powered_relevancies=True, k=None,
                stochastic=False, n_samples=32, beta=0.1, log_scores=True):
     """
     NeuralNDCG loss introduced in "NeuralNDCG: Direct Optimisation of a Ranking Metric via Differentiable
@@ -24,6 +24,7 @@ def neuralNDCG(y_pred, y_true, padded_value_indicator=PADDED_Y_VALUE, temperatur
     :param log_scores: log_scores parameter for NeuralSort algorithm, used if stochastic == True
     :return: loss value, a torch.Tensor
     """
+
     dev = get_torch_device()
 
     if k is None:

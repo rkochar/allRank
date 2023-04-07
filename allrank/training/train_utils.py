@@ -14,10 +14,12 @@ from allrank.utils.tensorboard_utils import TensorboardSummaryWriter
 
 logger = get_logger()
 
+ndcg5, ndcg10, ndcg15 = [], [], []
 
-def loss_batch(model, loss_func, xb, yb, indices, gradient_clipping_norm, opt=None):
+
+def loss_batch(model,epoch, loss_func, xb, yb, indices, gradient_clipping_norm, opt=None):
     mask = (yb == PADDED_Y_VALUE)
-    loss = loss_func(model(xb, mask, indices), yb)
+    loss = loss_func(model(xb, mask, indices), yb,epoch)
 
     if opt is not None:
         loss.backward()
@@ -57,9 +59,18 @@ def compute_metrics(metrics, model, dl, dev):
 
 
 def epoch_summary(epoch, train_loss, val_loss, train_metrics, val_metrics):
+    global ndcg5, ndcg10, ndcg15
     summary = "Epoch : {epoch} Train loss: {train_loss} Val loss: {val_loss}".format(
         epoch=epoch, train_loss=train_loss, val_loss=val_loss)
     for metric_name, metric_value in train_metrics.items():
+        if metric_name == "ndcg_5":
+            ndcg5.append(metric_value)
+        elif metric_name == "ndcg_10":
+            ndcg10.append(metric_value)
+        elif metric_name == "ndcg_15":
+            ndcg15.append(metric_value)
+
+
         summary += " Train {metric_name} {metric_value}".format(
             metric_name=metric_name, metric_value=metric_value)
 
@@ -76,8 +87,8 @@ def get_current_lr(optimizer):
 
 
 def fit(epochs, model, loss_func, optimizer, scheduler, train_dl, valid_dl, config,
-        gradient_clipping_norm, early_stopping_patience, device, output_dir, tensorboard_output_path):
-    tensorboard_summary_writer = TensorboardSummaryWriter(tensorboard_output_path)
+        gradient_clipping_norm, early_stopping_patience,test_dl, device, output_dir, tensorboard_output_path):
+    # tensorboard_summary_writer = TensorboardSummaryWriter(tensorboard_output_path)
 
     num_params = get_num_params(model)
     log_num_params(num_params)
@@ -92,7 +103,7 @@ def fit(epochs, model, loss_func, optimizer, scheduler, train_dl, valid_dl, conf
         # yb dim: [batch_size, slate_length]
 
         train_losses, train_nums = zip(
-            *[loss_batch(model, loss_func, xb.to(device=device), yb.to(device=device), indices.to(device=device),
+            *[loss_batch(model,epoch, loss_func, xb.to(device=device), yb.to(device=device), indices.to(device=device),
                          gradient_clipping_norm, optimizer) for
               xb, yb, indices in train_dl])
         train_loss = np.sum(np.multiply(train_losses, train_nums)) / np.sum(train_nums)
@@ -101,7 +112,7 @@ def fit(epochs, model, loss_func, optimizer, scheduler, train_dl, valid_dl, conf
         model.eval()
         with torch.no_grad():
             val_losses, val_nums = zip(
-                *[loss_batch(model, loss_func, xb.to(device=device), yb.to(device=device), indices.to(device=device),
+                *[loss_batch(model,epoch, loss_func, xb.to(device=device), yb.to(device=device), indices.to(device=device),
                              gradient_clipping_norm) for
                   xb, yb, indices in valid_dl])
             val_metrics = compute_metrics(config.metrics, model, valid_dl, device)
@@ -116,9 +127,9 @@ def fit(epochs, model, loss_func, optimizer, scheduler, train_dl, valid_dl, conf
         tensorboard_metrics_dict.update(val_metrics_to_tb)
         tensorboard_metrics_dict.update({("train", "lr"): get_current_lr(optimizer)})
 
-        tensorboard_summary_writer.save_to_tensorboard(tensorboard_metrics_dict, epoch)
+        #tensorboard_summary_writer.save_to_tensorboard(tensorboard_metrics_dict, epoch)
 
-        logger.info(epoch_summary(epoch, train_loss, val_loss, train_metrics, val_metrics))
+        print(epoch_summary(epoch, train_loss, val_loss, train_metrics, val_metrics))
 
         current_val_metric_value = val_metrics.get(config.val_metric)
         if scheduler:
@@ -134,10 +145,25 @@ def fit(epochs, model, loss_func, optimizer, scheduler, train_dl, valid_dl, conf
                 "early stopping at epoch {} since {} didn't improve from epoch no {}. Best value {}, current value {}".format(
                     epoch, config.val_metric, early_stop.best_epoch, early_stop.best_value, current_val_metric_value
                 ))
+            global ndcg5, ndcg10, ndcg15
+            logger.info("Metric ndcg5")
+            print(ndcg5)
+            logger.info("Metric ndcg10")
+            print(ndcg10)
+            logger.info("Metric ndcg15")
+            print(ndcg15)
             break
 
-    torch.save(model.state_dict(), os.path.join(output_dir, "model.pkl"))
-    tensorboard_summary_writer.close_all_writers()
+
+    #Provide test metrics for the fold of data
+    test_metrics = compute_metrics(config.metrics, model, test_dl, device)
+    print(test_metrics)
+
+
+
+
+    # torch.save(model.state_dict(), os.path.join(output_dir, "model.pkl"))
+    # tensorboard_summary_writer.close_all_writers()
 
     return {
         "epochs": epoch,
