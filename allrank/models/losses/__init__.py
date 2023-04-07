@@ -10,6 +10,6 @@ from .ordinal import *  # noqa F403 F401
 from .pointwise import *  # noqa F403 F401
 from .rankNet import *  # noqa F403 F401
 from .bce import *  # noqa F403 F401
-from .bestlossfunction import * # noqa F403 F401
+from .iternn import * # noqa F403 F401
 from .secondlossfunction import * # noqa F403 F401
 from .thirdlossfunction import * # noqa F403 F401
