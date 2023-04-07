@@ -21,7 +21,7 @@
     }
   },
   "data": {
-    "path": "./informationRet/allrank/data/Fold4",
+    "path": "/informationRet/allrank/data/Fold4",
     "validation_ds_role": "vali",
     "num_workers": 6,
     "batch_size": 64,
@@ -50,7 +50,7 @@
     "ndcg_5", "ndcg_10", "ndcg_15","ndcg_1"
   ],
   "loss": {
-    "name": "neuralNDCG",
+    "name": "iterNN",
     "args": {
     }
   },
